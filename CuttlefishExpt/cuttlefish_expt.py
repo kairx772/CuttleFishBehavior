@@ -116,7 +116,7 @@ class CuttlefishExpt(Processor):
             self.ser.write(b"D")
         elif self.R_amplitude == 40:
             self.ser.write(b"F")
-        elif self.L_amplitude == 50:
+        elif self.R_amplitude == 50:
             self.ser.write(b"H")
         print ('To RIGHT swing~~~')
 
@@ -174,9 +174,9 @@ class CuttlefishExpt(Processor):
         else:
             self.shrimp_dead_count += 1
 
-        if self.shrimp_count > 45:
-            if self.shrimp_dead_count > 60:
-                self.shrimp_home = True
+        # if self.shrimp_count > 45:
+        #     if self.shrimp_dead_count > 60:
+        #         self.shrimp_home = True
 
         if is_cutlef > 3:
             print ('cuttlefish is happy!!!')
@@ -205,7 +205,7 @@ class CuttlefishExpt(Processor):
         print ('R_buffer ', self.R_buffer)
         if self.shrimp_home == True:
             print ("shrimp go home~~")
-            self.ser.write(b"O")
+            # self.ser.write(b"O")
         elif self.L_buffer > 10:
             self.switch_to_left_swing()
         elif self.R_buffer > 10:
