@@ -183,18 +183,18 @@ class CuttlefishExpt(Processor):
 
         # if (pose[1, 2] > self.lik_thresh) and (pose[6, 2] > self.lik_thresh):
         if (is_cutlef > 3):
-            if pose[1, 0] < self.jose_x_pars and pose[1, 1] < self.jose_y_pars:
+            if pose[0, 0] < self.jose_x_pars and pose[0, 1] < self.jose_y_pars:
                 self.L_buffer += 1
                 self.R_buffer = 0
                 # self.switch_to_left()
-            elif pose[1, 0] > self.jose_x_pars and pose[1, 1] < self.jose_y_pars:
+            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] < self.jose_y_pars:
                 self.L_buffer = 0
                 self.R_buffer += 1
                 # self.switch_to_right()
-            elif pose[1, 0] < self.jose_x_pars and pose[1, 1] > self.jose_y_pars:
+            elif pose[0, 0] < self.jose_x_pars and pose[0, 1] > self.jose_y_pars:
                 self.L_buffer = 0
                 self.R_buffer += 1
-            elif pose[1, 0] > self.jose_x_pars and pose[1, 1] > self.jose_y_pars:
+            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] > self.jose_y_pars:
                 self.L_buffer += 1
                 self.R_buffer = 0
         else:
