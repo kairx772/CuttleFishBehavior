@@ -390,7 +390,7 @@ void loop() {
     }
     else if (cmd[0] == 'X') {
       stepperX.runToNewPosition(2);
-      while (1) {}
+      delay(30000);
     }
     Serial.flush();
     while(Serial.read()>= 0){}

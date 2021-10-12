@@ -61,7 +61,7 @@ class CuttlefishExpt(Processor):
         self.shrimp_home = False
 
         self.timeout = 0
-        self.timeout_start = 900
+        self.timeout_start = 750
 
         # print ("wait for Arduino...")
         # while (self.ser.inWaiting() == 0):
