@@ -18,11 +18,13 @@ from dlclive import Processor
 
 class CuttlefishExpt(Processor):
     def __init__(self, 
-            com=1, 
-            lik_thresh=0.5, 
-            baudrate=int(9600), 
-            jose_x_pars=580.0, 
-            jose_y_pars= 580.0,
+            com = 1, 
+            lik_thresh = 0.5, 
+            baudrate = int(9600), 
+            jose_x_pars = 630, 
+            jose_y_pars = 540,
+            soft_y_up = 460,
+            soft_y_dn = 620,
             L_amplitude = 20, 
             R_amplitude = 20, 
             swing_freq = 255, 
@@ -36,6 +38,8 @@ class CuttlefishExpt(Processor):
         self.in_time = []
         self.jose_x_pars = jose_x_pars
         self.jose_y_pars = jose_y_pars
+        self.soft_y_up = soft_y_up
+        self.soft_y_dn = soft_y_dn
         self.L_amplitude = L_amplitude
         self.R_amplitude = R_amplitude
 
@@ -59,9 +63,10 @@ class CuttlefishExpt(Processor):
         self.shrimp_count = 0
         self.shrimp_dead_count = 0
         self.shrimp_home = False
+        self.shrimp_loc = 0         # 0: start state, 1: left, 2: right
 
         self.timeout = 0
-        self.timeout_start = 750
+        self.timeout_start = 650
 
         # print ("wait for Arduino...")
         # while (self.ser.inWaiting() == 0):
@@ -72,12 +77,6 @@ class CuttlefishExpt(Processor):
         self.ser.write(b"Z")
         time.sleep(1)
         self.ser.write("{} {}".format(int(swing_freq), int(swing_period)).encode())
-
-        # print ('time delay... wait for start...')     
-        # d_time = 30
-        # for t in range(d_time):
-        #     time.sleep(1)
-        #     print ('time out:', (d_time - t))
 
     def close_serial(self):
         self.ser.close()
@@ -97,7 +96,9 @@ class CuttlefishExpt(Processor):
     def switch_to_left_swing(self):
         ### flush input buffer ###
         self.ser.reset_input_buffer()
-        if self.L_amplitude == 10:
+        if self.R_amplitude == 0:
+            self.ser.write(b"L")
+        elif self.L_amplitude == 10:
             self.ser.write(b"A")
         elif self.L_amplitude == 20:
             self.ser.write(b"C")
@@ -110,7 +111,9 @@ class CuttlefishExpt(Processor):
     def switch_to_right_swing(self):
         ### flush input buffer ###
         self.ser.reset_input_buffer()
-        if self.R_amplitude == 10:
+        if self.R_amplitude == 0:
+            self.ser.write(b"R")
+        elif self.R_amplitude == 10:
             self.ser.write(b"B")
         elif self.R_amplitude == 20:
             self.ser.write(b"D")
@@ -147,15 +150,10 @@ class CuttlefishExpt(Processor):
             self.frame_numls.append(self.frame_num)
             self.posels.append(pose)
             self.frame_num += 1
-        # print ('hellow cuttlefish is running!!!')
-        # print ('type(pose)', type(pose))
-        # print ('pose.shape', pose.shape)
+
         print ('pose:=======')
         print(np.array_str(pose, precision=3, suppress_small=True))
-        # if pose[1, 2] > self.lik_thresh:
-        #     print ('cuttlefish is happy!!!')
-        # if pose[6, 2] > self.lik_thresh:
-        #     print ('shrimp is happy!!!!!')
+
 
         is_cutlef = 0
         for j in range(5):
@@ -168,45 +166,44 @@ class CuttlefishExpt(Processor):
                 is_shrimp += 1
         
         if is_shrimp > 1:
-            self.shrimp_count +=1
-            self.shrimp_dead_count = 0
             print (self.shrimp_count, self.shrimp_dead_count, 'shrimp is happy!!!!!')
         else:
-            self.shrimp_dead_count += 1
-
-        # if self.shrimp_count > 45:
-        #     if self.shrimp_dead_count > 60:
-        #         self.shrimp_home = True
-
+            print ('shrimp missing...')
         if is_cutlef > 3:
             print ('cuttlefish is happy!!!')
+        else:
+            print ('shrimp missing...')
 
         # if (pose[1, 2] > self.lik_thresh) and (pose[6, 2] > self.lik_thresh):
         if (is_cutlef > 3):
             if pose[0, 0] < self.jose_x_pars and pose[0, 1] < self.jose_y_pars:
                 self.L_buffer += 1
                 self.R_buffer = 0
-                # self.switch_to_left()
-            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] < self.jose_y_pars:
-                self.L_buffer = 0
-                self.R_buffer += 1
-                # self.switch_to_right()
             elif pose[0, 0] < self.jose_x_pars and pose[0, 1] > self.jose_y_pars:
                 self.L_buffer = 0
                 self.R_buffer += 1
-            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] > self.jose_y_pars:
+            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] < self.soft_y_up:
+                self.L_buffer = 0
+                self.R_buffer += 1
+            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] > self.soft_y_dn:
                 self.L_buffer += 1
                 self.R_buffer = 0
+            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] > self.soft_y_up and pose[0, 1] < self.soft_y_up:
+                if self.shrimp_loc ==0:
+                    if pose[0, 1] < self.jose_y_pars:
+                        self.L_buffer = 0
+                        self.R_buffer += 1
+                    elif pose[0, 1] > self.jose_y_pars:
+                        self.L_buffer += 1
+                        self.R_buffer = 0
         else:
             self.L_buffer = 0
             self.R_buffer = 0
 
         print ('L_buffer ', self.L_buffer)
         print ('R_buffer ', self.R_buffer)
-        if self.shrimp_home == True:
-            print ("shrimp go home~~")
-            # self.ser.write(b"O")
-        elif self.L_buffer > 10:
+
+        if self.L_buffer > 10:
             self.switch_to_left_swing()
         elif self.R_buffer > 10:
             self.switch_to_right_swing()
