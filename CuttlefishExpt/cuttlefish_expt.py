@@ -21,10 +21,10 @@ class CuttlefishExpt(Processor):
             com = 1, 
             lik_thresh = 0.5, 
             baudrate = int(9600), 
-            jose_x_pars = 630, 
-            jose_y_pars = 540,
-            soft_y_up = 460,
-            soft_y_dn = 620,
+            jose_x_pars = 630.0, 
+            jose_y_pars = 540.0,
+            soft_y_up = 500.0,
+            soft_y_dn = 580.0,
             L_amplitude = 20, 
             R_amplitude = 20, 
             swing_freq = 255, 
@@ -107,6 +107,7 @@ class CuttlefishExpt(Processor):
         elif self.L_amplitude == 50:
             self.ser.write(b"G")
         print ('To LEFT swing~~~')
+        self.shrimp_loc == 1
 
     def switch_to_right_swing(self):
         ### flush input buffer ###
@@ -122,6 +123,7 @@ class CuttlefishExpt(Processor):
         elif self.R_amplitude == 50:
             self.ser.write(b"H")
         print ('To RIGHT swing~~~')
+        self.shrimp_loc == 2
 
     def switch_to_startpoint(self):
         ### flush input buffer ###
@@ -189,7 +191,7 @@ class CuttlefishExpt(Processor):
                 self.L_buffer += 1
                 self.R_buffer = 0
             elif pose[0, 0] > self.jose_x_pars and pose[0, 1] > self.soft_y_up and pose[0, 1] < self.soft_y_up:
-                if self.shrimp_loc ==0:
+                if self.shrimp_loc == 0:
                     if pose[0, 1] < self.jose_y_pars:
                         self.L_buffer = 0
                         self.R_buffer += 1
