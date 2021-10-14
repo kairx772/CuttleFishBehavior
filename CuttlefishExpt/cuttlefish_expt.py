@@ -28,7 +28,9 @@ class CuttlefishExpt(Processor):
             L_amplitude = 20, 
             R_amplitude = 20, 
             swing_freq = 255, 
-            swing_period = 0):
+            swing_period = 0,
+            swap_delay = 500,
+            if_random = 0):
 
         super().__init__()
         self.ser = serial.Serial('/dev/ttyACM'+str(com), baudrate)
@@ -42,6 +44,7 @@ class CuttlefishExpt(Processor):
         self.soft_y_dn = soft_y_dn
         self.L_amplitude = L_amplitude
         self.R_amplitude = R_amplitude
+        self.if_random = if_random
 
         self.frame_num = 0
         self.frame_numls = []
@@ -76,7 +79,13 @@ class CuttlefishExpt(Processor):
         time.sleep(1)
         self.ser.write(b"Z")
         time.sleep(1)
-        self.ser.write("{} {}".format(int(swing_freq), int(swing_period)).encode())
+        self.ser.write("{} {} {}".format(int(swing_freq), int(swing_period), int(swap_delay)).encode())
+        # time.sleep(1)
+        # print ("move to middle~")
+        # self.ser.write(b"M")
+        # self.ser.write(b"M")
+        # self.ser.write(b"M")
+        # self.ser.write(b"M")
 
     def close_serial(self):
         self.ser.close()
@@ -97,13 +106,25 @@ class CuttlefishExpt(Processor):
         ### flush input buffer ###
         self.ser.reset_input_buffer()
         if self.R_amplitude == 0:
-            self.ser.write(b"L")
+            if self.if_random:
+                self.ser.write(b"l")
+            else:
+                self.ser.write(b"L")
         elif self.L_amplitude == 10:
-            self.ser.write(b"A")
+            if self.if_random:
+                self.ser.write(b"a")
+            else:
+                self.ser.write(b"A")
         elif self.L_amplitude == 20:
-            self.ser.write(b"C")
+            if self.if_random:
+                self.ser.write(b"c")
+            else:
+                self.ser.write(b"C")
         elif self.L_amplitude == 40:
-            self.ser.write(b"E")
+            if self.if_random:
+                self.ser.write(b"e")
+            else:
+                self.ser.write(b"E")
         elif self.L_amplitude == 50:
             self.ser.write(b"G")
         print ('To LEFT swing~~~')
@@ -113,13 +134,25 @@ class CuttlefishExpt(Processor):
         ### flush input buffer ###
         self.ser.reset_input_buffer()
         if self.R_amplitude == 0:
-            self.ser.write(b"R")
+            if self.if_random:
+                self.ser.write(b"r")
+            else:
+                self.ser.write(b"R")
         elif self.R_amplitude == 10:
-            self.ser.write(b"B")
+            if self.if_random:
+                self.ser.write(b"b")
+            else:
+                self.ser.write(b"B")
         elif self.R_amplitude == 20:
-            self.ser.write(b"D")
+            if self.if_random:
+                self.ser.write(b"d")
+            else:
+                self.ser.write(b"D")
         elif self.R_amplitude == 40:
-            self.ser.write(b"F")
+            if self.if_random:
+                self.ser.write(b"f")
+            else:
+                self.ser.write(b"F")
         elif self.R_amplitude == 50:
             self.ser.write(b"H")
         print ('To RIGHT swing~~~')
@@ -145,6 +178,7 @@ class CuttlefishExpt(Processor):
         self.timeout += 1
         if (self.timeout < self.timeout_start):
             print ('time out: ', self.timeout_start - self.timeout)
+            self.ser.write(b"M")
             return pose
 
         if kwargs["record"]:
@@ -212,7 +246,7 @@ class CuttlefishExpt(Processor):
 
         self.frame_t1 = time.time()
         frametime = self.frame_t1 - self.frame_t0
-        print ('process fps,frame time: ', int(1/frametime), frametime)
+        print ('process fps, fnumber, frame time: ', int(1/frametime), self.frame_num, frametime)
         self.frame_t0 = time.time()
         print ('===========')
 
