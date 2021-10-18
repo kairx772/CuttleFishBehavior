@@ -29,7 +29,7 @@ class CuttlefishExpt(Processor):
             R_amplitude = 20, 
             swing_freq = 255, 
             swing_period = 0,
-            swap_delay = 500,
+            swap_delay = 1000,
             if_random = 0):
 
         super().__init__()
@@ -212,24 +212,24 @@ class CuttlefishExpt(Processor):
 
         # if (pose[1, 2] > self.lik_thresh) and (pose[6, 2] > self.lik_thresh):
         if (is_cutlef > 3):
-            if pose[0, 0] < self.jose_x_pars and pose[0, 1] < self.jose_y_pars:
+            if pose[1, 0] < self.jose_x_pars and pose[1, 1] < self.jose_y_pars:
                 self.L_buffer += 1
                 self.R_buffer = 0
-            elif pose[0, 0] < self.jose_x_pars and pose[0, 1] > self.jose_y_pars:
+            elif pose[1, 0] < self.jose_x_pars and pose[1, 1] > self.jose_y_pars:
                 self.L_buffer = 0
                 self.R_buffer += 1
-            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] < self.soft_y_up:
+            elif pose[1, 0] > self.jose_x_pars and pose[1, 1] < self.soft_y_up:
                 self.L_buffer = 0
                 self.R_buffer += 1
-            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] > self.soft_y_dn:
+            elif pose[1, 0] > self.jose_x_pars and pose[1, 1] > self.soft_y_dn:
                 self.L_buffer += 1
                 self.R_buffer = 0
-            elif pose[0, 0] > self.jose_x_pars and pose[0, 1] > self.soft_y_up and pose[0, 1] < self.soft_y_up:
+            elif pose[1, 0] > self.jose_x_pars and pose[1, 1] > self.soft_y_up and pose[0, 1] < self.soft_y_up:
                 if self.shrimp_loc == 0:
-                    if pose[0, 1] < self.jose_y_pars:
+                    if pose[1, 1] < self.jose_y_pars:
                         self.L_buffer = 0
                         self.R_buffer += 1
-                    elif pose[0, 1] > self.jose_y_pars:
+                    elif pose[1, 1] > self.jose_y_pars:
                         self.L_buffer += 1
                         self.R_buffer = 0
         else:
@@ -239,9 +239,9 @@ class CuttlefishExpt(Processor):
         print ('L_buffer ', self.L_buffer)
         print ('R_buffer ', self.R_buffer)
 
-        if self.L_buffer > 10:
+        if self.L_buffer > 5:
             self.switch_to_left_swing()
-        elif self.R_buffer > 10:
+        elif self.R_buffer > 5:
             self.switch_to_right_swing()
 
         self.frame_t1 = time.time()

@@ -36,9 +36,9 @@
 #define mm_per_rev 10       // Depends on the screw you choose
 #define pulse_per_rev 400   // Check with the DIP settings on motor driver
 #define starting_point 150  // midpoint of a swings. Please check step_per_mm if the displacement is not the same as desired
-#define L_point 75
+#define L_point 70
 #define R_point 270
-#define M_point 175
+#define M_point 170
 #define pause_time 0
 
 #include "AccelStepper.h"
@@ -86,7 +86,7 @@ char cmd[1];
 int swing_freq = 255;
 int swing_period = 0;
 int swing_count = 0;
-int swap_delay = 500;
+int swap_delay = 1000;
 
 long L_rndpt = L_point;
 long R_rndpt = R_point;
@@ -233,6 +233,9 @@ void loop() {
     else if (cmd[0] == 'A') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'A') {
         stepperX.runToNewPosition((L_point+ampl_s)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -256,6 +259,9 @@ void loop() {
     else if (cmd[0] == 'B') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'B') {
         stepperX.runToNewPosition((R_point+ampl_s)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -279,6 +285,9 @@ void loop() {
     else if (cmd[0] == 'C') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'C') {
         stepperX.runToNewPosition((L_point+ampl_m)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -302,6 +311,9 @@ void loop() {
     else if (cmd[0] == 'D') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'D') {
         stepperX.runToNewPosition((R_point+ampl_m)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -325,6 +337,9 @@ void loop() {
     else if (cmd[0] == 'E') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'E') {
         stepperX.runToNewPosition((L_point+ampl_l)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -348,6 +363,9 @@ void loop() {
     else if (cmd[0] == 'F') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'F') {
         stepperX.runToNewPosition((R_point+ampl_l)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -371,6 +389,9 @@ void loop() {
     else if (cmd[0] == 'G') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'G') {
         stepperX.runToNewPosition((L_point+ampl_xl)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -394,6 +415,9 @@ void loop() {
     else if (cmd[0] == 'H') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'H') {
         stepperX.runToNewPosition((R_point+ampl_xl)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -418,6 +442,9 @@ void loop() {
     else if (cmd[0] == 'a') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'a') {
         stepperX.runToNewPosition((L_rndpt+ampl_s)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -442,6 +469,9 @@ void loop() {
     else if (cmd[0] == 'b') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'b') {
         stepperX.runToNewPosition((R_rndpt+ampl_s)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -466,6 +496,9 @@ void loop() {
     else if (cmd[0] == 'c') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'c') {
         stepperX.runToNewPosition((L_rndpt+ampl_m)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -490,6 +523,9 @@ void loop() {
     else if (cmd[0] == 'd') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'd') {
         stepperX.runToNewPosition((R_rndpt+ampl_m)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -514,6 +550,9 @@ void loop() {
     else if (cmd[0] == 'e') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'e') {
         stepperX.runToNewPosition((L_rndpt+ampl_l)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -538,6 +577,9 @@ void loop() {
     else if (cmd[0] == 'f') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'f') {
         stepperX.runToNewPosition((R_rndpt+ampl_l)* step_per_mm);
         stepperX.setMaxSpeed(swing_speed);
@@ -562,6 +604,9 @@ void loop() {
     else if (cmd[0] == 'l') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'l') {
         L_rndpt = random(L_point-ampl_l, (M_point-25));
         stepperX.runToNewPosition((L_rndpt)* step_per_mm);
@@ -580,6 +625,9 @@ void loop() {
     else if (cmd[0] == 'r') {
       stepperX.runToNewPosition(M_point* step_per_mm);
       delay(swap_delay);
+      while (Serial.available()>0) {
+        cmd[0] = Serial.read();
+      }
       while (cmd[0] == 'r') {
         R_rndpt = random(M_point+25, R_point-ampl_l);
         stepperX.runToNewPosition((R_rndpt)* step_per_mm);
